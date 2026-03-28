@@ -49,7 +49,7 @@
     "security-scanner"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "type": "commonjs",
   "dependencies": {

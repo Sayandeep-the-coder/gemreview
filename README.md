@@ -5,7 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/gemreview)](https://www.npmjs.com/package/gemreview)
 [![npm downloads](https://img.shields.io/npm/dm/gemreview)](https://www.npmjs.com/package/gemreview)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node.js ≥ 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+[![Node.js ≥ 20](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 
 GemReview analyses your GitHub pull requests using Gemini AI and posts **inline comments** + a **structured summary** — covering code quality, security, test coverage, and performance optimisation. Runs entirely from your terminal. No server. No CI setup required.
 
