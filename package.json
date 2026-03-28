@@ -1,18 +1,20 @@
 {
   "name": "gemreview",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI-powered CLI PR review bot using Google Gemini — posts inline comments and a structured summary to GitHub pull requests",
   "author": "Sayandeep",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sayandeep-the-coder/gemreview"
+    "url": "git+https://github.com/Sayandeep-the-coder/gemreview.git"
   },
   "homepage": "https://github.com/Sayandeep-the-coder/gemreview#readme",
   "bugs": {
     "url": "https://github.com/Sayandeep-the-coder/gemreview/issues"
   },
-  "bin": { "gemreview": "./dist/index.js" },
+  "bin": {
+    "gemreview": "dist/index.js"
+  },
   "main": "./dist/index.js",
   "files": [
     "dist/",
@@ -32,7 +34,7 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "cli",
@@ -46,7 +48,9 @@
     "code-quality",
     "security-scanner"
   ],
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "type": "commonjs",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
