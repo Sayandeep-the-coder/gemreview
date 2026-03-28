@@ -1,0 +1,19 @@
+# Source files (not needed — dist/ is the built output)
+src/
+tests/
+
+# Config
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+.eslintrc.json
+.prettierrc
+.env
+.env.example
+.gemreview.json
+
+# Dev files
+node_modules/
+*.map
+.git/
+.gitignore

@@ -1,0 +1,9 @@
+{
+  "dimensions": ["bugs", "security", "tests", "optimisation"],
+  "severity_threshold": "medium",
+  "max_inline_comments": 20,
+  "exclude_paths": ["*.lock", "dist/**", "*.min.js", "*.generated.*"],
+  "summary_comment": true,
+  "inline_comments": true,
+  "model": "gemini-2.5-flash"
+}

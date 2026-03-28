@@ -1,0 +1,25 @@
+Dimension: SECURITY VULNERABILITIES
+
+Review the diff below for security vulnerabilities.
+
+Focus specifically on:
+- Injection risks: SQL injection, command injection, XSS, SSTI, LDAP injection
+- Hardcoded secrets: API keys, passwords, tokens, private keys committed in code
+- Missing or insufficient input validation and sanitisation
+- Improper authentication or authorisation checks
+- Insecure direct object references (IDOR)
+- Insecure deserialization patterns
+- Unsafe use of eval(), exec(), or dynamic code execution
+- Sensitive data exposure in logs, responses, or error messages
+- CSRF vulnerabilities in state-changing endpoints
+- Path traversal vulnerabilities
+
+Severity guidance:
+- critical: direct exploit path (e.g. hardcoded production credential, unsanitised SQLi)
+- high: likely exploitable with moderate effort
+- medium: exploitable under specific conditions
+- low: defence-in-depth / hardening recommendation
+
+<diff>
+{DIFF_CONTENT}
+</diff>

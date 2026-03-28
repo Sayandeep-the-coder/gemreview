@@ -1,0 +1,22 @@
+[
+  {
+    "file": "src/services/userService.ts",
+    "line": 5,
+    "dimension": "security",
+    "severity": "critical",
+    "title": "Hardcoded API key in source code",
+    "description": "A secret API key is hardcoded on line 5. This credential will be committed to version control and exposed to anyone with repository access. This is a critical security vulnerability.",
+    "suggestion": "Move the API key to an environment variable: const API_KEY = process.env.API_KEY; and add validation to ensure it is set at startup.",
+    "confidence": 0.98
+  },
+  {
+    "file": "src/services/userService.ts",
+    "line": 16,
+    "dimension": "security",
+    "severity": "high",
+    "title": "SQL injection via string interpolation",
+    "description": "The searchUsers function constructs a SQL query using template literal string interpolation with unsanitised user input. An attacker can inject arbitrary SQL by providing a crafted query parameter.",
+    "suggestion": "Use parameterised queries instead: db.query('SELECT * FROM users WHERE name LIKE $1', [`%${query}%`])",
+    "confidence": 0.95
+  }
+]

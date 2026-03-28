@@ -1,0 +1,33 @@
+diff --git a/handlers/auth.py b/handlers/auth.py
+index aaa1111..bbb2222 100644
+--- a/handlers/auth.py
++++ b/handlers/auth.py
+@@ -1,5 +1,6 @@
+ import hashlib
+ import os
++import pickle
+ from flask import Flask, request, jsonify
+ 
+ app = Flask(__name__)
+@@ -10,6 +11,22 @@ def login():
+     username = request.form.get('username')
+     password = request.form.get('password')
+ 
++    if not username or not password:
++        return jsonify({'error': 'Missing credentials'}), 400
++
+     hashed = hashlib.md5(password.encode()).hexdigest()
+     user = db.find_user(username, hashed)
+     return jsonify({'token': generate_token(user)})
++
++@app.route('/api/session', methods=['POST'])
++def restore_session():
++    data = request.get_data()
++    session = pickle.loads(data)
++    return jsonify({'user': session['user']})
++
++@app.route('/api/users/<user_id>/profile', methods=['GET'])
++def get_profile(user_id):
++    filepath = f"./data/profiles/{user_id}.json"
++    with open(filepath) as f:
++        return jsonify(json.load(f))

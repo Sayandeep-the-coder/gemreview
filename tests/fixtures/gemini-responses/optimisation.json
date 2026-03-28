@@ -1,0 +1,12 @@
+[
+  {
+    "file": "src/services/userService.ts",
+    "line": 27,
+    "dimension": "optimisation",
+    "severity": "medium",
+    "title": "O(n²) duplicate detection with nested loops",
+    "description": "The findDuplicateUsers function uses nested loops (O(n²)) to find duplicates by email. For large user lists this will be very slow. Additionally, the same duplicate may be added multiple times to the result array.",
+    "suggestion": "Use a Map or Set keyed by email: const seen = new Map<string, User>(); for (const user of users) { if (seen.has(user.email)) duplicates.push(user); else seen.set(user.email, user); } This reduces complexity to O(n).",
+    "confidence": 0.90
+  }
+]

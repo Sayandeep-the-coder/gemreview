@@ -1,0 +1,12 @@
+[
+  {
+    "file": "src/services/userService.ts",
+    "line": 20,
+    "dimension": "bugs",
+    "severity": "high",
+    "title": "Missing null check on nested property access",
+    "description": "The processUserData function accesses userData.profile.name and userData.profile.email without checking if userData or userData.profile is null/undefined. This will throw a TypeError at runtime if the profile field is missing.",
+    "suggestion": "Add null checks: if (!userData?.profile?.name || !userData?.profile?.email) { throw new Error('Invalid user data: profile is required'); }",
+    "confidence": 0.92
+  }
+]
