@@ -10,6 +10,9 @@ import { renderSummaryTable } from '../output/table.js';
 import { renderDryRun } from '../output/dryRun.js';
 import { registerSensitiveKeys, setVerbose } from '../output/logger.js';
 import * as logger from '../output/logger.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import chalk from 'chalk';
 
 export async function runCommand(options: RunOptions): Promise<void> {
   const startTime = Date.now();
@@ -103,15 +106,42 @@ export async function runCommand(options: RunOptions): Promise<void> {
 
   spinner.succeed(`Analysis complete — ${findings.length} finding(s)`);
 
-  // 8. Dry-run mode
+  // 8. Generate agent prompt
+  if (options.prompt || options.promptOutput) {
+    const { generateAgentPrompt } = await import('../output/agentPrompt.js');
+
+    // Fetch the raw diff patches for context
+    const agentPrompt = generateAgentPrompt({
+      findings,
+      diffs,
+      prUrl:   options.pr,
+      prTitle: meta.title,
+      model:   config.model,
+    });
+
+    if (options.promptOutput) {
+      const outputDir = path.dirname(options.promptOutput);
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+      }
+      fs.writeFileSync(options.promptOutput, agentPrompt, 'utf8');
+      logger.success(`✅ Agent prompt saved to ${options.promptOutput}`);
+    } else {
+      console.log('\n' + chalk.cyan('─'.repeat(60)));
+      console.log(chalk.bold.cyan('  🤖 GemReview Agent Prompt — copy everything below'));
+      console.log(chalk.cyan('─'.repeat(60)) + '\n');
+      console.log(agentPrompt);
+      console.log('\n' + chalk.cyan('─'.repeat(60)) + '\n');
+    }
+  }
+
+  // 9. Dry-run mode
   if (options.dryRun) {
     await renderDryRun(findings);
     const tableOutput = await renderSummaryTable(findings);
     console.log(tableOutput);
     return;
   }
-
-  // 9. Post inline comments
   if (config.inline_comments && findings.length > 0) {
     const commentSpinner = await createSpinner('Posting inline comments...');
     commentSpinner.start();

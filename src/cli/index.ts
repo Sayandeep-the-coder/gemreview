@@ -9,7 +9,7 @@ const program = new Command();
 program
   .name('gemreview')
   .description('AI-powered CLI PR review bot using Google Gemini')
-  .version('1.0.0');
+  .version('1.1.0');
 
 // gemreview init
 program
@@ -41,6 +41,8 @@ program
     'Maximum number of inline comments to post',
     (val: string) => parseInt(val, 10),
   )
+  .option('--prompt', 'Generate an AI agent prompt to fix all findings (prints to stdout)')
+  .option('--prompt-output <path>', 'Save the agent prompt to a file instead of printing')
   .action(async (opts) => {
     await runCommand({
       pr: opts.pr,
@@ -50,6 +52,8 @@ program
       severity: opts.severity as Severity | undefined,
       model: opts.model,
       maxComments: opts.maxComments,
+      prompt: opts.prompt || opts.promptOutput !== undefined,
+      promptOutput: opts.promptOutput,
     });
   });
 

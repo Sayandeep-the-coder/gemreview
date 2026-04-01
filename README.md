@@ -118,6 +118,8 @@ Options for `run`:
   --verbose                Debug output
   --no-inline              Skip inline comments, post summary only
   --no-summary             Skip summary comment, post inline comments only
+  --prompt                 Generate an AI agent prompt to fix all findings (printed to stdout)
+  --prompt-output <path>   Save the agent prompt to a file instead of printing
   -h, --help               Show help
 ```
 
@@ -138,6 +140,15 @@ gemreview run --pr https://github.com/acme/api/pull/88 --severity high
 
 # Summary comment only (no inline noise)
 gemreview run --pr https://github.com/acme/api/pull/88 --no-inline
+
+# Generate an AI agent fix prompt and print it to the terminal
+gemreview run --pr https://github.com/acme/api/pull/88 --prompt
+
+# Save the agent prompt to a file to paste into your editor
+gemreview run --pr https://github.com/acme/api/pull/88 --prompt --prompt-output fix-prompt.md
+
+# Review + post comments to GitHub AND generate the agent prompt
+gemreview run --pr https://github.com/acme/api/pull/88 --prompt
 ```
 
 ---

@@ -8,4 +8,6 @@ export interface RunOptions {
   severity?: Severity;
   model?: string;
   maxComments?: number;
+  prompt: boolean;
+  promptOutput?: string;
 }
