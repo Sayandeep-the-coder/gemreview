@@ -17,6 +17,15 @@ import chalk from 'chalk';
 export async function runCommand(options: RunOptions): Promise<void> {
   const startTime = Date.now();
 
+  // Detect CI environment — adjust output for GitHub Actions log format
+  const isCI = process.env.GEMREVIEW_CI === 'true' || process.env.CI === 'true';
+  if (isCI) {
+    // Disable spinner in CI — it produces garbled output in GitHub Actions logs
+    // The spinner check should already use ora's isTTY detection,
+    // but set this explicitly for safety
+    process.env.FORCE_COLOR = '1';
+  }
+
   // 1. Parse and validate the PR URL
   const prUrl = options.pr;
   if (!prUrl || !prUrl.match(/github\.com\/[^/]+\/[^/]+\/pull\/\d+/)) {
@@ -103,6 +112,23 @@ export async function runCommand(options: RunOptions): Promise<void> {
   // 7. Apply severity filter + comment cap
   findings = filterBySeverity(findings, config.severity_threshold);
   findings = capComments(findings, config.max_inline_comments);
+
+  if (options.failOnSeverity) {
+    const severityOrder: Record<string, number> = {
+      low: 0, medium: 1, high: 2, critical: 3,
+    };
+    const threshold = severityOrder[options.failOnSeverity] ?? -1;
+    const hasViolation = findings.some(
+      f => (severityOrder[f.severity] ?? 0) >= threshold
+    );
+    if (hasViolation) {
+      await logger.error(
+        `❌ GemReview: findings found at or above severity "${options.failOnSeverity}". ` +
+        `Failing CI check.`
+      );
+      process.exit(1);   // signals failure to GitHub Actions
+    }
+  }
 
   spinner.succeed(`Analysis complete — ${findings.length} finding(s)`);
 

@@ -97,6 +97,74 @@ That's it. GemReview will:
 4. Post a summary comment to the PR thread
 5. Print a results summary to your terminal
 
+## GitHub Actions Integration
+
+Add GemReview to any GitHub repo in 2 steps — no CLI setup required.
+
+### Step 1 — Add your Gemini API key as a secret
+
+In your repo: **Settings → Secrets and variables → Actions → New repository secret**
+
+```
+Name:  GEMINI_API_KEY
+Value: AIzaSy...   (your Gemini API key from aistudio.google.com)
+```
+
+### Step 2 — Create the workflow file
+
+Create `.github/workflows/gemreview.yml` in your repo:
+
+```yaml
+name: GemReview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write   # required to post inline comments
+
+    steps:
+      - uses: Sayandeep-the-coder/gemreview@v1
+        with:
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+```
+
+That's it. Every PR in your repo now gets an automatic AI review.
+
+### Action Inputs
+
+| Input | Default | Description |
+|-------|---------|-------------|
+| `gemini-api-key` | required | Your Gemini API key (use a secret) |
+| `github-token` | auto | Provided by GitHub — no action needed |
+| `dimensions` | all 4 | `bugs,security,tests,optimisation` |
+| `severity-threshold` | `medium` | Minimum severity to post as a comment |
+| `max-inline-comments` | `20` | Cap on inline comments per review |
+| `fail-on-severity` | off | Fail the CI check at this severity level |
+| `skip-draft-prs` | `true` | Skip draft PRs |
+| `skip-bots` | `true` | Skip bot-authored PRs (e.g. Dependabot) |
+| `post-prompt` | `false` | Post AI fix prompt as a PR comment |
+| `dry-run` | `false` | Review without posting any comments |
+
+### Block merges on critical findings
+
+```yaml
+- uses: Sayandeep-the-coder/gemreview@v1
+  with:
+    gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+    fail-on-severity: critical   # PR cannot merge if critical finding found
+```
+
+### Security note
+
+Your Gemini API key is stored in **your own repo's secrets**.
+GemReview never receives, stores, or logs your key.
+It passes directly from your secrets to the Gemini API at runtime.
+
 ---
 
 ## Usage

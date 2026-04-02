@@ -17,3 +17,9 @@ node_modules/
 *.map
 .git/
 .gitignore
+
+action/src/
+action/node_modules/
+action/tsup.config.ts
+action/package.json
+action/package-lock.json

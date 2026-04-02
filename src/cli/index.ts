@@ -41,6 +41,10 @@ program
     'Maximum number of inline comments to post',
     (val: string) => parseInt(val, 10),
   )
+  .option(
+    '--fail-on-severity <level>',
+    'Exit with code 1 if any finding reaches this severity: low|medium|high|critical'
+  )
   .option('--prompt', 'Generate an AI agent prompt to fix all findings (prints to stdout)')
   .option('--prompt-output <path>', 'Save the agent prompt to a file instead of printing')
   .action(async (opts) => {
@@ -54,6 +58,7 @@ program
       maxComments: opts.maxComments,
       prompt: opts.prompt || opts.promptOutput !== undefined,
       promptOutput: opts.promptOutput,
+      failOnSeverity: opts.failOnSeverity,
     });
   });
 

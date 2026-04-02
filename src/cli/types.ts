@@ -10,4 +10,5 @@ export interface RunOptions {
   maxComments?: number;
   prompt: boolean;
   promptOutput?: string;
+  failOnSeverity?: string;
 }
