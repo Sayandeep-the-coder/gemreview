@@ -3,6 +3,9 @@ name: Publish to Registries
 on:
   release:
     types: [published, created]
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
