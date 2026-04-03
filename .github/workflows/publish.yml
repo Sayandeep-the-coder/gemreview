@@ -42,10 +42,11 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
+          scope: '@sayandeep-the-coder'
 
       - name: Scope Package for GitHub Packages
         run: |
-          jq '.name = "@Sayandeep-the-coder/gemreview"' package.json > package.tmp.json && mv package.tmp.json package.json
+          jq '.name = "@sayandeep-the-coder/gemreview"' package.json > package.tmp.json && mv package.tmp.json package.json
 
       - name: Publish to GitHub Packages
         run: npm publish
