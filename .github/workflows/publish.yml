@@ -1,4 +1,4 @@
-name: Publish to npm
+name: Publish to Registries
 
 on:
   release:
@@ -10,21 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # required for npm provenance
+      id-token: write     # Required for npm provenance
+      packages: write     # Required for GitHub Packages
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
-          cache: "npm"
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
 
       - name: Install root dependencies
         run: npm ci --fetch-retries=5 --fetch-retry-mintimeout=20000
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build CLI + Action
         run: npm run build
@@ -32,7 +31,23 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Publish to npm
+      - name: Publish to Global NPM
+        continue-on-error: true # Keep going even if NPM publish fails
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Setup Node for GitHub Packages
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Scope Package for GitHub Packages
+        run: |
+          jq '.name = "@Sayandeep-the-coder/gemreview"' package.json > package.tmp.json && mv package.tmp.json package.json
+
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
