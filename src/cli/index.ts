@@ -3,13 +3,19 @@ import { runCommand } from './run.js';
 import { initCommand } from './init.js';
 import { configShowCommand, configSetCommand } from './config.js';
 import type { Dimension, Severity } from '../gemini/parser.js';
+import packageJson from '../../package.json';
+
+// This constant is injected during the build process by tsup (see tsup.config.ts)
+// For development (ts-node), we fall back to the version in package.json
+declare const PKG_VERSION: string;
+const version = typeof PKG_VERSION !== 'undefined' ? PKG_VERSION : packageJson.version;
 
 const program = new Command();
 
 program
   .name('gemreview')
   .description('AI-powered CLI PR review bot using Google Gemini')
-  .version('1.1.0');
+  .version(version);
 
 // gemreview init
 program
