@@ -2,21 +2,35 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 
-// API base URL priority: config file → env var → production default
+// API base URL priority: env var → config (production only) → production default
 function resolveApiBaseUrl(): string {
-  // 1. Check env var
+  const PRODUCTION_DEFAULT = 'https://gemreview-api.onrender.com';
+
+  // 1. Check env var (strongest developer override)
   if (process.env.GEMREVIEW_API_URL) return process.env.GEMREVIEW_API_URL;
+
   // 2. Check config file
   try {
     const configPath = path.join(os.homedir(), '.gemreview', 'config.json');
     if (fs.existsSync(configPath)) {
       const raw = fs.readFileSync(configPath, 'utf-8');
       const config = JSON.parse(raw) as Record<string, unknown>;
-      if (config.api_url && typeof config.api_url === 'string') return config.api_url;
+      const storedUrl = config.api_url;
+
+      if (storedUrl && typeof storedUrl === 'string') {
+        // If the stored URL is a development/test URL, skip it and use production default
+        const isDevUrl =
+          storedUrl.includes('localhost') ||
+          storedUrl.includes('127.0.0.1') ||
+          storedUrl.includes('ngrok-free.dev');
+
+        if (!isDevUrl) return storedUrl;
+      }
     }
   } catch { /* ignore */ }
-  // 3. Default to production
-  return 'https://gemreview-api.onrender.com';
+
+  // 3. Fallback to production default
+  return PRODUCTION_DEFAULT;
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();
