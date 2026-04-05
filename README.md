@@ -21,15 +21,16 @@ GemReview analyses your GitHub pull requests using Gemini AI and posts **inline 
 - 📋 **Summary comment** — severity table posted to the PR thread
 - 🌐 **Multi-language** — works with any language in your diff
 - 🔧 **Config file** — per-repo `.gemreview.json` for team-wide settings
+- 👥 **Team Mode** — use shared organisation credits for reviews
 - 🧪 **Dry-run mode** — preview output in terminal before posting
 
 ---
 
 ## Requirements
 
-- Node.js ≥ 18
-- A [Google Gemini API key](https://aistudio.google.com/app/apikey)
-- A GitHub Personal Access Token with `repo` scope
+- Node.js ≥ 20
+- **GitHub Personal Access Token** with `repo` scope (Mandatory for both modes)
+- **Google Gemini API key** (Only for Personal Mode)
 
 ---
 
@@ -46,56 +47,111 @@ npx gemreview init
 
 ---
 
-## Quick Start
+## Choosing Your Mode
 
-### 1. Initialise
+GemReview v1.3.0 supports two ways to run AI code reviews. Choose the one that fits your workflow.
 
+| Feature | **Personal Mode** | **Team Mode** |
+|---------|-------------------|---------------|
+| **API Key** | Your own (Google AI Studio) | Shared (managed by Org) |
+| **Setup** | `gemreview init` | `gemreview auth login` |
+| **Analysis** | Local (Direct to Google) | Remote (Via GemReview API) |
+| **Privacy** | Code stays between you & Google | Code proxied via GemReview API |
+| **Cost** | Uses your personal quota | Uses organization credits |
+| **Ideal For** | Individual devs, private projects | Teams, open-source orgs |
+
+---
+
+## 🚀 Getting Started
+
+### Option A: Personal Mode (Individual/Private)
+
+Use your own [Google Gemini API key](https://aistudio.google.com/app/apikey). Your code and keys remain entirely local to your machine.
+
+**1. Initialise**
 ```bash
 gemreview init
 ```
-
-GemReview will prompt you interactively in the terminal:
-
+*GemReview will prompt you interactively:*
 ```
 $ gemreview init
-
 Welcome to GemReview 🤖
 ─────────────────────────────────────────
-
 ? Enter your Gemini API key:  ********************************
-  ↳ Get one free at https://aistudio.google.com/app/apikey
-  ↳ Stored in ~/.gemreview/config.json (chmod 600 — readable only by you)
-
-? Enter your GitHub Personal Access Token:  ********************************
-  ↳ Needs `repo` scope — https://github.com/settings/tokens
   ↳ Stored in ~/.gemreview/config.json (chmod 600)
-
-? Default Gemini model:
-  ❯ gemini-2.5-pro  (higher quality, slower)
-    gemini-2.0-flash  (faster, lower cost)
-
-✅ Config saved to ~/.gemreview/config.json
-   Run `gemreview run --pr <url>` to review your first PR.
+? Enter your GitHub Personal Access Token:  ********************************
+  ↳ Stored in ~/.gemreview/config.json (chmod 600)
+✅ Config saved!
 ```
 
-**Your API key is:**
-- Typed directly into your terminal (input is masked with `*`)
-- Never sent anywhere except directly to `generativelanguage.googleapis.com`
-- Stored locally at `~/.gemreview/config.json` with `600` permissions (only your user can read it)
-- Never logged, printed in errors, or included in any output
-
-### 2. Review a PR
-
+**2. Review a PR**
 ```bash
-gemreview run --pr https://github.com/your-org/your-repo/pull/42
+gemreview run --pr <url>
 ```
 
-That's it. GemReview will:
-1. Fetch the PR diff from GitHub
-2. Send it to Gemini in structured chunks
-3. Post inline comments for each finding
-4. Post a summary comment to the PR thread
-5. Print a results summary to your terminal
+---
+
+### Option B: Team Mode (Organizations/Shared)
+
+Perfect for teams. Sign in with GitHub to access your organisation's shared credits and shared Gemini API key. No personal API key required!
+
+**1. Login via GitHub**
+```bash
+gemreview auth login
+```
+
+**2. Configure GitHub Token (Local access)**
+Even in Team Mode, the CLI needs a token to read/write to your repositories locally.
+```bash
+gemreview config set github_token <your_github_pat>
+```
+
+**3. Select your Organisation**
+```bash
+gemreview org list      # see your memberships
+gemreview org use <id>  # switch active context
+```
+
+**4. Review a PR**
+```bash
+gemreview run --pr <url>
+```
+
+---
+
+## Team Mode Command Reference
+
+| Command | Description |
+|---------|-------------|
+| `org create <name>` | Create a new organization |
+| `org list` | List all organizations you belong to |
+| `org use <slug>` | Set the active organization for reviews |
+| `org usage` | View usage stats & remaining credits |
+| `org set-gemini-key <key>` | (Admin) Set a shared Gemini API key for the org |
+| **Members** | |
+| `org members list` | List all members in the active org |
+| `org members invite <id>`| Invite a member by GitHub login or email |
+| `org members remove <id>`| (Admin) Remove a member from the org |
+| **API Keys** | |
+| `org keys list` | List your secret API keys for the org |
+| `org keys create <name>`| Generate a new CLI API key |
+| `org keys delete <id>` | Revoke an API key |
+| **Invites** | |
+| `org invites show <token>`| Look up invitation details |
+| `org invites accept <token>`| Join an organization via invitation |
+
+
+## How it Works
+
+GemReview is designed for speed and security. Whether in Personal or Team mode, the workflow follows these steps:
+
+1. **Fetch**: Connects to the GitHub API to fetch the PR metadata and file diffs.
+2. **Filter**: Excludes any files matching your glob patterns in `.gemreview.json`.
+3. **Analyze**: 
+    - **Personal:** Sends structured chunks to Google Gemini directly.
+    - **Team:** Sends diffs to the GemReview API for proxied analysis.
+4. **Post**: Comments on the PR thread (inline + summary) via the octokit client.
+5. **Report**: (Team Mode only) Usage is reported to your organization dashboard.
 
 ## GitHub Actions Integration
 
@@ -177,6 +233,9 @@ Commands:
   run                      Run a review on a GitHub PR
   config show              Display current global config
   config set <key> <val>   Update a config value
+  auth login|logout|status GitHub authentication
+  org create|list|use      Organisation management
+  org members list|invite  Team member management
 
 Options for `run`:
   --pr <url>               GitHub PR URL (required)
@@ -253,7 +312,7 @@ Your Gemini API key and GitHub token are stored separately in `~/.gemreview/conf
 
 ```json
 {
-  "gemini_api_key": "AIzaSy...",
+  "gemini_api_key": "AIzaSy...", # (Optional if using Team Mode)
   "github_token": "ghp_...",
   "github_base_url": "https://api.github.com"
 }
@@ -335,10 +394,16 @@ gemreview/
 
 ## Privacy & Security
 
-- Your code is sent to Google Gemini's API for analysis. Review [Google's data policy](https://ai.google.dev/gemini-api/terms).
-- API keys are stored locally in `~/.gemreview/config.json` with `600` permissions.
-- Keys are never logged, printed, or included in error output.
-- Use `--dry-run` to avoid any write calls to GitHub.
+> [!IMPORTANT]
+> **GemReview is built with a security-first architecture. Your code and credentials are never stored permanently on our servers.**
+
+- **Analysis Privacy:** Your code is sent to Google Gemini's API for analysis. Review [Google's data policy](https://ai.google.dev/gemini-api/terms).
+- **Personal Mode:** The CLI communicates **directly** with Google. Your Gemimi API key stays on your machine.
+- **Team Mode:** The CLI sends the diff to the GemReview API which proxies it to Gemini. We **do not store** your code beyond the life of the request.
+- **Encrypted Org Keys:** Shared organization Gemini keys are encrypted at rest using **AES-256-GCM**.
+- **Output Masking:** All API keys and tokens are automatically masked (`***`) in terminal output, logs, and error messages.
+- **Local Security:** All configurations are stored in `~/.gemreview/config.json` with **`600` permissions** (restricted to your user only).
+- **Dry-run:** Use `--dry-run` to preview findings without making any write calls to GitHub.
 
 ---
 

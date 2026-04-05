@@ -2,6 +2,14 @@ import { Command } from 'commander';
 import { runCommand } from './run.js';
 import { initCommand } from './init.js';
 import { configShowCommand, configSetCommand } from './config.js';
+import { authLoginCommand, authLogoutCommand, authStatusCommand } from './auth.js';
+import {
+  orgCreateCommand, orgListCommand, orgUseCommand, orgSetGeminiKeyCommand,
+  orgMembersListCommand, orgMembersInviteCommand, orgMembersRemoveCommand,
+  orgKeysListCommand, orgKeysCreateCommand, orgKeysDeleteCommand,
+  orgUsageCommand,
+  orgInvitesShowCommand, orgInvitesAcceptCommand,
+} from './org.js';
 import type { Dimension, Severity } from '../gemini/parser.js';
 import packageJson from '../../package.json';
 
@@ -86,6 +94,111 @@ configCmd
   .action(async (key: string, value: string) => {
     await configSetCommand(key, value);
   });
+
+// gemreview auth
+const authCmd = program
+  .command('auth')
+  .description('Authenticate with GemReview API');
+
+authCmd
+  .command('login')
+  .description('Login via GitHub OAuth — opens browser')
+  .action(async () => { await authLoginCommand(); });
+
+authCmd
+  .command('logout')
+  .description('Remove saved authentication token')
+  .action(async () => { await authLogoutCommand(); });
+
+authCmd
+  .command('status')
+  .description('Show current logged-in user and org memberships')
+  .action(async () => { await authStatusCommand(); });
+
+// gemreview org
+const orgCmd = program
+  .command('org')
+  .description('Manage organisations and teams');
+
+orgCmd
+  .command('create <name>')
+  .description('Create a new organisation')
+  .action(async (name: string) => { await orgCreateCommand(name); });
+
+orgCmd
+  .command('list')
+  .description('List your organisations')
+  .action(async () => { await orgListCommand(); });
+
+orgCmd
+  .command('use <slug>')
+  .description('Set the active organisation')
+  .action(async (slug: string) => { await orgUseCommand(slug); });
+
+orgCmd
+  .command('set-gemini-key <key>')
+  .description('Provision organisation with a Google Gemini API key')
+  .action(async (key: string) => { await orgSetGeminiKeyCommand(key); });
+
+orgCmd
+  .command('usage')
+  .description('Show usage stats for the active organisation')
+  .action(async () => { await orgUsageCommand(); });
+
+// gemreview org members
+const membersCmd = orgCmd
+  .command('members')
+  .description('Manage organisation members');
+
+membersCmd
+  .command('list')
+  .description('List members of the active organisation')
+  .action(async () => { await orgMembersListCommand(); });
+
+membersCmd
+  .command('invite <target>')
+  .description('Invite by email or @githubLogin')
+  .action(async (target: string) => { await orgMembersInviteCommand(target); });
+
+membersCmd
+  .command('remove <userId>')
+  .description('Remove a member (admin only)')
+  .action(async (userId: string) => { await orgMembersRemoveCommand(userId); });
+
+// gemreview org keys
+const keysCmd = orgCmd
+  .command('keys')
+  .description('Manage org API keys (admin only)');
+
+keysCmd
+  .command('list')
+  .description('List API keys')
+  .action(async () => { await orgKeysListCommand(); });
+
+keysCmd
+  .command('create <name>')
+  .description('Create a new API key')
+  .action(async (name: string) => { await orgKeysCreateCommand(name); });
+
+keysCmd
+  .command('delete <keyId>')
+  .description('Delete an API key')
+  .action(async (keyId: string) => { await orgKeysDeleteCommand(keyId); });
+
+// gemreview org invites
+const invitesCmd = orgCmd
+  .command('invites')
+  .description('Manage organisation invitations');
+
+invitesCmd
+  .command('show <token>')
+  .description('View invitation details')
+  .action(async (token: string) => { await orgInvitesShowCommand(token); });
+
+invitesCmd
+  .command('accept <token>')
+  .description('Accept an invitation')
+  .action(async (token: string) => { await orgInvitesAcceptCommand(token); });
 
 program.parseAsync(process.argv).catch((err) => {
   console.error(err.message);

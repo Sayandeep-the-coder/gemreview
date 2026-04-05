@@ -13,9 +13,32 @@ import * as logger from '../output/logger.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
+import { readFromConfig } from './apiClient.js';
 
 export async function runCommand(options: RunOptions): Promise<void> {
   const startTime = Date.now();
+
+  // ── Team mode: if org_api_key is configured, record review via backend ──
+  const orgApiKeyRaw = readFromConfig('org_api_key') as string | undefined;
+  const orgApiKey = orgApiKeyRaw?.trim();
+  if (orgApiKey && !options.dryRun) {
+    try {
+      const { apiRequest } = await import('./apiClient.js');
+      const { parsePRUrl: parse } = await import('../github/pr.js');
+      const { owner, repo, pull_number } = parse(options.pr);
+
+      // Still run the local review, but also report to the backend
+      // The org_api_key is used for backend auth (grk_...)
+      const durationMs = Date.now() - startTime;
+
+      // We'll report the review after the local review completes
+      // Store the key for later use
+      (options as any)._orgApiKey = orgApiKey;
+      (options as any)._reportToBackend = true;
+    } catch {
+      // Silently fall through to solo mode if API is unreachable
+    }
+  }
 
   // Detect CI environment — adjust output for GitHub Actions log format
   const isCI = process.env.GEMREVIEW_CI === 'true' || process.env.CI === 'true';
@@ -57,7 +80,10 @@ export async function runCommand(options: RunOptions): Promise<void> {
   }
 
   // Register sensitive keys for masking
-  registerSensitiveKeys([config.gemini_api_key, config.github_token]);
+  const sensitiveKeys = [config.gemini_api_key, config.github_token].filter(
+    (k): k is string => !!k,
+  );
+  registerSensitiveKeys(sensitiveKeys);
 
   // 3. Fetch PR diff
   const spinner = await createSpinner('Fetching PR diff...');
@@ -98,11 +124,34 @@ export async function runCommand(options: RunOptions): Promise<void> {
   }
 
   // 6. Run analysis
-  spinner.text = 'Analysing with Gemini...';
-
-  let findings;
+  let findings: any[] = [];
   try {
-    findings = await runReview(config, diffs);
+    if (orgApiKey) {
+      spinner.text = 'Analysing via GemReview API (Team Mode)...';
+      const { apiRequest } = await import('./apiClient.js');
+      
+      const response = await apiRequest<{ findings: any[] }>('/reviews/analyze', {
+        method: 'POST',
+        body: {
+          diffs: diffs.map(d => ({ filename: d.filename, patch: d.patch })),
+          dimensions: config.dimensions,
+          model: config.model,
+        },
+        token: orgApiKey,
+      });
+      findings = response.findings;
+    } else {
+      if (!config.gemini_api_key) {
+        spinner.fail('Missing API Key');
+        await logger.error(
+          'Gemini API key is required for local analysis. ' +
+          'Set it with "gemreview config set gemini_api_key <key>" or join an organisation.',
+        );
+        process.exit(1);
+      }
+      spinner.text = 'Analysing with Gemini (Local Mode)...';
+      findings = await runReview(config, diffs);
+    }
   } catch (error: any) {
     spinner.fail('Analysis failed');
     await logger.error(error.message);
@@ -227,4 +276,37 @@ export async function runCommand(options: RunOptions): Promise<void> {
   console.log(tableOutput);
 
   await logger.success(`✅ Review complete — ${findings.length} finding(s) posted.`);
+
+  // 12. Report to backend if in team mode
+  if ((options as any)._reportToBackend && (options as any)._orgApiKey) {
+    try {
+      const { apiRequest } = await import('./apiClient.js');
+      const durationMs = Date.now() - startTime;
+
+      await apiRequest('/reviews', {
+        method: 'POST',
+        token: (options as any)._orgApiKey,
+        body: {
+          repoName:      `${owner}/${repo}`,
+          prNumber:      pull_number,
+          prTitle:       meta.title,
+          prUrl:         options.pr,
+          triggeredBy:   'cli',
+          model:         config.model,
+          durationMs,
+          filesReviewed: diffs.length,
+          linesChanged:  totalLines,
+          totalFindings: findings.length,
+          criticalCount: findings.filter(f => f.severity === 'critical').length,
+          highCount:     findings.filter(f => f.severity === 'high').length,
+          mediumCount:   findings.filter(f => f.severity === 'medium').length,
+          lowCount:      findings.filter(f => f.severity === 'low').length,
+        },
+      });
+      await logger.debug('Review reported to GemReview API');
+    } catch {
+      // Non-fatal — the local review already completed successfully
+      await logger.debug('Failed to report review to backend (non-fatal)');
+    }
+  }
 }

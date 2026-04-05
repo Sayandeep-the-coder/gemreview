@@ -1,6 +1,9 @@
-# Source files (not needed — dist/ is the built output)
+# Source files (all code is in dist/)
 src/
 tests/
+api/
+action/
+prompts/test/     # Exclude any test prompts if present
 
 # Config
 tsconfig.json
@@ -9,17 +12,23 @@ vitest.config.ts
 .eslintrc.json
 .prettierrc
 .env
-.env.example
+.env.*
 .gemreview.json
+.npmignore
+.gitignore
 
-# Dev files
+# Project docs (internal only)
+PRD.md
+ARCHITECTURE.md
+CONTRIBUTING.md
+ROADMAP.md
+
+# Dev artifacts
 node_modules/
 *.map
 .git/
-.gitignore
-
-action/src/
-action/node_modules/
-action/tsup.config.ts
-action/package.json
-action/package-lock.json
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

@@ -1,4 +1,4 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 
 # Build output
@@ -46,10 +46,21 @@ pnpm-lock.yaml
 .cache/
 
 # Project docs (internal only)
-
 /PRD.md
 /PROMPTS.md
 /ROADMAP.md
 
 # Local config (keep .gemreview.json as example, ignore user overrides)
 .gemreview.local.json
+
+# API backend (api/ subfolder)
+api/node_modules/
+api/dist/
+api/.env
+api/.env.local
+api/ngrok.exe
+api/ngrok
+
+# GitHub Action (action/ subfolder)
+action/node_modules/
+action/dist/

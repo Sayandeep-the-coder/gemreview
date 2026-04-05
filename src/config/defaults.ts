@@ -1,5 +1,9 @@
 import type { ProjectConfig } from './schema.js';
 
+// API base URL — override with GEMREVIEW_API_URL env var for local dev
+export const API_BASE_URL =
+  process.env.GEMREVIEW_API_URL ?? 'https://gemreview-api.onrender.com';
+
 export const PROJECT_DEFAULTS: ProjectConfig = {
   dimensions: ['bugs', 'security', 'tests', 'optimisation'],
   severity_threshold: 'medium',
@@ -15,6 +19,10 @@ export const GLOBAL_CONFIG_KEYS = [
   'github_token',
   'github_base_url',
   'model',
+  'gemreview_token',
+  'active_org',
+  'org_api_key',
+  'api_url',
 ] as const;
 
 export type GlobalConfigKey = (typeof GLOBAL_CONFIG_KEYS)[number];

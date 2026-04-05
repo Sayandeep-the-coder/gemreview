@@ -14,10 +14,14 @@ export const ProjectConfigSchema = z.object({
 });
 
 export const GlobalConfigSchema = z.object({
-  gemini_api_key: z.string().min(1, 'Gemini API key is required'),
+  gemini_api_key: z.string().optional(),
   github_token: z.string().min(1, 'GitHub token is required'),
   github_base_url: z.string().url().optional().default('https://api.github.com'),
   model: z.string().optional(),
+  // Team features (v1.3.0)
+  gemreview_token: z.string().optional(),
+  active_org: z.string().optional(),
+  org_api_key: z.string().optional(),
 });
 
 export const ReviewConfigSchema = ProjectConfigSchema.merge(GlobalConfigSchema).extend({
