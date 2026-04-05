@@ -28,7 +28,7 @@ authRoutes.get('/github/cli', (c) => {
   const clientId = process.env.GITHUB_CLIENT_ID;
   const APP_URL = process.env.APP_URL;
 
-  const redirectUri = encodeURIComponent(`${APP_URL}/auth/callback`);
+  const redirectUri = encodeURIComponent(`${APP_URL}/auth/github/callback`);
   const oauthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email&state=cli`;
 
   return c.redirect(oauthUrl);
@@ -43,7 +43,7 @@ authRoutes.get('/github/web', (c) => {
   const clientId = process.env.GITHUB_CLIENT_ID;
   const APP_URL = process.env.APP_URL;
 
-  const redirectUri = encodeURIComponent(`${APP_URL}/auth/callback`);
+  const redirectUri = encodeURIComponent(`${APP_URL}/auth/github/callback`);
   // Carry inviteToken in 'state'
   const state = inviteToken ? `invite:${inviteToken}` : 'web';
 
@@ -53,10 +53,10 @@ authRoutes.get('/github/web', (c) => {
 });
 
 /**
- * GET /auth/callback (Unified Redirector)
+ * GET /auth/github/callback (Unified Redirector)
  * Callback handler for both CLI and Web OAuth flows.
  */
-authRoutes.get('/callback', async (c) => {
+authRoutes.get('/github/callback', async (c) => {
   const code = c.req.query('code');
   const state = c.req.query('state') || '';
 
