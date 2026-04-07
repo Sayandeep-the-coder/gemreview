@@ -157,18 +157,19 @@ export async function orgMembersInviteCommand(target: string): Promise<void> {
 }
 
 /**
- * gemreview org members remove <userId>
+ * gemreview org members remove <target>
+ * Target can be userId or @githubLogin
  */
-export async function orgMembersRemoveCommand(userId: string): Promise<void> {
+export async function orgMembersRemoveCommand(target: string): Promise<void> {
   const chalk = (await import('chalk')).default;
   const slug = getActiveOrg();
   if (!slug) return;
 
   try {
-    await apiRequest(`/members/orgs/${encodeURIComponent(slug)}/members/${userId}`, {
+    await apiRequest(`/members/orgs/${encodeURIComponent(slug)}/members/${encodeURIComponent(target)}`, {
       method: 'DELETE',
     });
-    console.log(chalk.green(`\n  ✅ Member removed from ${slug}\n`));
+    console.log(chalk.green(`\n  ✅ Member "${target}" removed from ${slug}\n`));
   } catch (err: any) {
     console.error(chalk.red(`  Error: ${err.message}`));
   }

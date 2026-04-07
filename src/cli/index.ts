@@ -161,9 +161,9 @@ membersCmd
   .action(async (target: string) => { await orgMembersInviteCommand(target); });
 
 membersCmd
-  .command('remove <userId>')
+  .command('remove <target>')
   .description('Remove a member (admin only)')
-  .action(async (userId: string) => { await orgMembersRemoveCommand(userId); });
+  .action(async (target: string) => { await orgMembersRemoveCommand(target); });
 
 // gemreview org keys
 const keysCmd = orgCmd

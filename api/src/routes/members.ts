@@ -80,13 +80,26 @@ memberRoutes.patch('/orgs/:slug/members/:userId', requireAdmin(), async (c) => {
 });
 
 /**
- * DELETE /members/orgs/:slug/members/:userId
- * Remove a member from the org. Admin only.
+ * DELETE /members/orgs/:slug/members/:target
+ * Remove a member from the org. Target can be userId or @githubLogin. Admin only.
  */
-memberRoutes.delete('/orgs/:slug/members/:userId', requireAdmin(), async (c) => {
+memberRoutes.delete('/orgs/:slug/members/:target', requireAdmin(), async (c) => {
   const org    = c.get('org');
   const user   = c.get('user');
-  const userId = c.req.param('userId');
+  const target = c.req.param('target') || '';
+
+  let userId: string | null = null;
+
+  if (target.startsWith('@')) {
+    // Look up user by GitHub login
+    const foundUser = await User.findOne({ githubLogin: target.slice(1) });
+    if (!foundUser) {
+      return c.json({ error: `User with GitHub login "${target.slice(1)}" not found` }, 404);
+    }
+    userId = foundUser._id.toString();
+  } else {
+    userId = target || null;
+  }
 
   // Cannot remove self
   if (userId === user._id.toString()) {
@@ -95,7 +108,7 @@ memberRoutes.delete('/orgs/:slug/members/:userId', requireAdmin(), async (c) => 
 
   const member = await OrgMember.findOne({ orgId: org._id, userId });
   if (!member) {
-    return c.json({ error: 'Member not found' }, 404);
+    return c.json({ error: 'Member not found in this organisation' }, 404);
   }
 
   // Cannot remove last admin
@@ -108,5 +121,5 @@ memberRoutes.delete('/orgs/:slug/members/:userId', requireAdmin(), async (c) => 
 
   await OrgMember.deleteOne({ _id: member._id });
 
-  return c.json({ success: true });
+  return c.json({ success: true, removed: target });
 });
