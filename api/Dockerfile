@@ -18,14 +18,16 @@ FROM node:20-slim
 
 WORKDIR /app
 
+ENV NODE_ENV=production
+
 # Only copy production dependencies and built output
 COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 
-# Ensure the port aligns with Cloud Run's default (8080)
-ENV PORT=8080
-EXPOSE 8080
+# Ensure the port aligns with the API's default (3001)
+ENV PORT=3001
+EXPOSE 3001
 
 CMD ["node", "dist/index.js"]

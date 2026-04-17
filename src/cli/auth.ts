@@ -12,7 +12,7 @@ export async function authLoginCommand(): Promise<void> {
   const { execSync } = await import('node:child_process');
 
   const CALLBACK_PORT = 9876;
-  const CALLBACK_URL  = `http://localhost:${CALLBACK_PORT}/callback`;
+  const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
   // Read GitHub client ID from env or fetch from backend
   let clientId = process.env.GITHUB_CLIENT_ID ?? '';
@@ -81,16 +81,107 @@ export async function authLoginCommand(): Promise<void> {
 
           // Save JWT to config
           saveToConfig('gemreview_token', data.token);
+          saveToConfig('api_url', API_BASE_URL);
 
-          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
           res.end(`
-            <html>
-            <body style="font-family: sans-serif; text-align: center; padding: 60px;">
-              <h2>✅ Authenticated!</h2>
-              <p>Welcome, <strong>${data.user.name || data.user.githubLogin}</strong>.</p>
-              <p>You can close this window and return to the terminal.</p>
-            </body>
-            </html>
+              <!DOCTYPE html>
+              <html lang="en">
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>GemReview — Authenticated</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+                <style>
+                  :root {
+                    --bg: #09090b;
+                    --text: #fafafa;
+                    --text-muted: #a1a1aa;
+                    --border: #27272a;
+                  }
+                  body {
+                    margin: 0;
+                    font-family: 'Inter', sans-serif;
+                    background: radial-gradient(circle at center, #1f1f2e 0%, var(--bg) 100%);
+                    color: var(--text);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 100vh;
+                    overflow: hidden;
+                  }
+                  .card {
+                    background: rgba(24, 24, 27, 0.6);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 24px;
+                    padding: 48px;
+                    text-align: center;
+                    max-width: 420px;
+                    width: 100%;
+                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                    animation: floatIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                    opacity: 0;
+                    transform: translateY(20px);
+                  }
+                  @keyframes floatIn {
+                    to { opacity: 1; transform: translateY(0); }
+                  }
+                  .icon-wrapper {
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05));
+                    border: 1px solid rgba(34, 197, 94, 0.2);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 24px;
+                    color: #4ade80;
+                    animation: pulse 2s infinite ease-in-out;
+                  }
+                  @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                  }
+                  h2 { 
+                    font-size: 28px; 
+                    margin: 0 0 12px 0; 
+                    background: linear-gradient(to right, #fff, #a1a1aa);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                  }
+                  p { color: var(--text-muted); line-height: 1.6; margin-bottom: 32px; font-size: 16px; }
+                  .highlight { color: var(--text); font-weight: 600; }
+                  .btn {
+                    display: inline-block;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid var(--border);
+                    color: var(--text);
+                    padding: 12px 24px;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: default;
+                    transition: all 0.2s ease;
+                  }
+                  .btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+                </style>
+              </head>
+              <body>
+                <div class="card">
+                  <div class="icon-wrapper">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <h2>Authenticated!</h2>
+                  <p>Welcome, <span class="highlight">${data.user.name || data.user.githubLogin}</span>.</p>
+                  <div class="btn">You can close this window now</div>
+                </div>
+              </body>
+              </html>
           `);
 
           console.log(chalk.green(`\n  ✅ Logged in as ${data.user.githubLogin} (${data.user.email})`));

@@ -81,6 +81,18 @@ npm test
 
 > **Tip:** Use `npm run dev` during development. It watches for file changes and recompiles automatically, removing the need to run `npm run build` after every edit.
 
+### Running the API Locally (Docker)
+
+If you need to test the GemReview API backend locally during development:
+1. Copy `api/.env.example` to `api/.env` and fill it out.
+2. Build and run via Docker:
+```bash
+cd api
+docker build -t gemreview-api .
+docker run -d --name gemreview-api -p 3001:3001 --env-file .env gemreview-api
+docker logs -f gemreview-api
+```
+
 ## Project Structure
 
 ```

@@ -25,7 +25,7 @@ app.use('*', cors({
 }));
 
 // ── Health Check ──
-app.get('/health', (c) => c.json({ status: 'ok', version: '1.3.1' }));
+app.get('/health', (c) => c.json({ status: 'ok', version: '1.3.3' }));
 
 // ── Routes ──
 app.route('/auth',     authRoutes);
@@ -68,21 +68,6 @@ setInterval(async () => {
 
 console.log('[reset] Monthly counter reset check enabled (daily)');
 
-// ── Keep-Alive (Render free tier) ──
-if (process.env.NODE_ENV === 'production') {
-  const SELF_URL = process.env.APP_URL ?? '';
-  if (SELF_URL) {
-    setInterval(async () => {
-      try {
-        await fetch(`${SELF_URL}/health`);
-        console.log('[keep-alive] pinged /health');
-      } catch {
-        // ignore — just keeping the service warm
-      }
-    }, 14 * 60 * 1000); // every 14 minutes
-  }
-}
-
 // ── Start Server ──
 const port = parseInt(process.env.PORT ?? '3001', 10);
 
@@ -90,5 +75,5 @@ serve({
   fetch: app.fetch,
   port,
 }, (info) => {
-  console.log(`\n  🚀 GemReview API v1.3.1 running on http://localhost:${info.port}\n`);
+  console.log(`\n  🚀 GemReview API v1.3.3 running on http://localhost:${info.port}\n`);
 });
