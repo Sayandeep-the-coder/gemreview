@@ -86,7 +86,7 @@ memberRoutes.patch('/orgs/:slug/members/:userId', requireAdmin(), async (c) => {
 memberRoutes.delete('/orgs/:slug/members/:target', requireAdmin(), async (c) => {
   const org    = c.get('org');
   const user   = c.get('user');
-  const target = c.req.param('target') || '';
+  const target = decodeURIComponent(c.req.param('target') || '');
 
   let userId: string | null = null;
 

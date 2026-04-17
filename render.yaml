@@ -29,13 +29,11 @@ services:
         sync: false
       - key: GITHUB_TOKEN
         sync: false
-      - key: SMTP_HOST
+      - key: GMAIL_USER
         sync: false
-      - key: SMTP_PORT
-        value: "587"
-      - key: SMTP_USER
+      - key: GMAIL_CLIENT_ID
         sync: false
-      - key: SMTP_PASS
+      - key: GMAIL_CLIENT_SECRET
         sync: false
-      - key: SMTP_FROM
+      - key: GMAIL_REFRESH_TOKEN
         sync: false

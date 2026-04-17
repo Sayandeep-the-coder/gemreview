@@ -1,29 +1,32 @@
 import nodemailer from 'nodemailer';
 
 /**
- * Email service using Nodemailer.
- * Supports any SMTP provider (Gmail, Outlook, custom SMTP, etc.)
- * Lazily initializes to avoid crashes when SMTP is not configured.
+ * Email service using Nodemailer and Gmail API via OAuth2.
+ * Lazily initializes to avoid crashes when credentials are not configured.
  */
 
 let transporter: nodemailer.Transporter | null = null;
 
 function getTransporter(): nodemailer.Transporter {
   if (!transporter) {
-    const host = process.env.SMTP_HOST;
-    const port = parseInt(process.env.SMTP_PORT ?? '587', 10);
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
+    const user = process.env.GMAIL_USER;
+    const clientId = process.env.GMAIL_CLIENT_ID;
+    const clientSecret = process.env.GMAIL_CLIENT_SECRET;
+    const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
 
-    if (!host || !user || !pass) {
-      throw new Error('SMTP is not configured — set SMTP_HOST, SMTP_USER, SMTP_PASS');
+    if (!user || !clientId || !clientSecret || !refreshToken) {
+      throw new Error('Gmail API OAuth2 is not configured — set GMAIL_USER, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN');
     }
 
     transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure: port === 465,
-      auth: { user, pass },
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user,
+        clientId,
+        clientSecret,
+        refreshToken,
+      },
     });
   }
   return transporter;
@@ -43,7 +46,7 @@ export async function sendInviteEmail({
   inviteToken: string;
 }) {
   const mailer   = getTransporter();
-  const from     = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? 'noreply@gemreview.dev';
+  const from     = process.env.GMAIL_USER ?? 'noreply@gemreview.dev';
   const inviteUrl = `${process.env.APP_URL ?? 'http://localhost:3001'}/invites/${inviteToken}`;
 
   await mailer.sendMail({

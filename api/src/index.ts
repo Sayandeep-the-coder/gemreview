@@ -25,7 +25,7 @@ app.use('*', cors({
 }));
 
 // ── Health Check ──
-app.get('/health', (c) => c.json({ status: 'ok', version: '1.3.0' }));
+app.get('/health', (c) => c.json({ status: 'ok', version: '1.3.1' }));
 
 // ── Routes ──
 app.route('/auth',     authRoutes);
@@ -90,5 +90,5 @@ serve({
   fetch: app.fetch,
   port,
 }, (info) => {
-  console.log(`\n  🚀 GemReview API v1.3.0 running on http://localhost:${info.port}\n`);
+  console.log(`\n  🚀 GemReview API v1.3.1 running on http://localhost:${info.port}\n`);
 });
