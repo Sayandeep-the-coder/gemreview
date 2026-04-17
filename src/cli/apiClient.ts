@@ -4,7 +4,7 @@ import * as os from 'node:os';
 
 // API base URL priority: env var → config (production only) → production default
 function resolveApiBaseUrl(): string {
-  const PRODUCTION_DEFAULT = 'https://gemreview-api.onrender.com';
+  const PRODUCTION_DEFAULT = 'https://gemreview-api-772745634945.us-central1.run.app';
 
   // 1. Check env var (strongest developer override)
   if (process.env.GEMREVIEW_API_URL) return process.env.GEMREVIEW_API_URL;
@@ -23,6 +23,15 @@ function resolveApiBaseUrl(): string {
           storedUrl.includes('localhost') ||
           storedUrl.includes('127.0.0.1') ||
           storedUrl.includes('ngrok-free.dev');
+
+        if (storedUrl.includes('onrender.com')) {
+          const chalk = require('chalk');
+          console.log(chalk.yellow('\n  ⚠️  Notice: The GemReview backend has permanently migrated to Google Cloud Run!'));
+          console.log(chalk.gray('  Your CLI configuration has been safely upgraded to the new API URL.\n'));
+          // remove from config file to clean up
+          removeFromConfig('api_url');
+          return PRODUCTION_DEFAULT;
+        }
 
         if (!isDevUrl) return storedUrl;
       }

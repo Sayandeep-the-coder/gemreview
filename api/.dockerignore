@@ -1,6 +1,9 @@
 node_modules
 dist
 .env
+.env.*
 .DS_Store
 .git
 npm-debug.log
+ngrok.exe
+*.md

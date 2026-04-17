@@ -382,6 +382,8 @@ gemreview/
 │   ├── review/           # Review orchestration and dimension runners
 │   ├── config/           # Config loading and validation
 │   └── output/           # Terminal formatting, spinner, colour output
+├── api/                  # Hono-based proxy API for Team Mode
+├── action/               # GitHub Actions standard workflow wrapper
 ├── prompts/              # Gemini prompt templates (per dimension)
 ├── tests/                # Unit + integration tests
 ├── .gemreview.json       # Example project config
