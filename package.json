@@ -40,16 +40,20 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
+    "google-gemini",
+    "gemini-ai",
+    "gemini-2.5-pro",
+    "google-ai",
+    "google-generative-ai",
+    "ai",
     "cli",
     "code-review",
-    "gemini",
     "github",
-    "ai",
-    "pr-review",
     "pull-request",
-    "google-gemini",
-    "code-quality",
-    "security-scanner"
+    "github-actions",
+    "security-scanner",
+    "typescript",
+    "nodejs"
   ],
   "engines": {
     "node": ">=20"

@@ -6,8 +6,11 @@
 [![npm downloads](https://img.shields.io/npm/dm/gemreview)](https://www.npmjs.com/package/gemreview)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js ≥ 20](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
+[![Powered by Gemini](https://img.shields.io/badge/Powered%20by-Google%20Gemini-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
 
-GemReview analyses your GitHub pull requests using Gemini AI and posts **inline comments** + a **structured summary** — covering code quality, security, test coverage, and performance optimisation. Runs entirely from your terminal. No server. No CI setup required.
+Software development teams face a critical bottleneck in code review. Pull requests pile up as senior engineers become the single point of failure, causing slow feedback loops and inconsistent quality.
+
+GemReview solves this by analysing your GitHub pull requests using Gemini AI and posting **inline comments** + a **structured summary** — covering code quality, security, test coverage, and performance optimisation. Runs entirely from your terminal. No server. No CI setup required.
 
 ---
 
@@ -23,6 +26,21 @@ GemReview analyses your GitHub pull requests using Gemini AI and posts **inline 
 - 🔧 **Config file** — per-repo `.gemreview.json` for team-wide settings
 - 👥 **Team Mode** — use shared organisation credits for reviews
 - 🧪 **Dry-run mode** — preview output in terminal before posting
+
+---
+
+## Google AI Integration
+
+GemReview is built on Google's AI infrastructure:
+
+| Google Service | Version | Purpose |
+|----------------|---------|---------|
+| **Gemini 2.5 Pro** | `gemini-2.5-pro` | Deep code analysis — 1M context window |
+| **Gemini 2.0 Flash** | `gemini-2.0-flash` | Fast reviews — lower latency + cost |
+| **Google AI Studio** | — | Free API key provisioning for developers |
+| **Google OAuth 2.0** | — | Team dashboard sign-in (v1.4.0) |
+
+Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com/app/apikey)
 
 ---
 
