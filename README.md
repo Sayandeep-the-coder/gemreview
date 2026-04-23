@@ -7,10 +7,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js ≥ 20](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![Powered by Gemini](https://img.shields.io/badge/Powered%20by-Google%20Gemini-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
+[![Docs](https://img.shields.io/badge/docs-gemreview--docs.vercel.app-blue)](https://gemreview-docs.vercel.app/)
 
 Software development teams face a critical bottleneck in code review. Pull requests pile up as senior engineers become the single point of failure, causing slow feedback loops and inconsistent quality.
 
 GemReview solves this by analysing your GitHub pull requests using Gemini AI and posting **inline comments** + a **structured summary** — covering code quality, security, test coverage, and performance optimisation. Runs entirely from your terminal. No server. No CI setup required.
+
+**📖 [Read the official documentation](https://gemreview-docs.vercel.app/)**
 
 ---
 
