@@ -313,12 +313,12 @@ export default function DocsPage() {
                 Node.js ≥ 20, a GitHub PAT with <code className="text-xs bg-accent px-1.5 py-0.5 rounded">repo</code> scope.
               </p>
               <CodeBlock title="Install globally">
-                {`npm install -g gemreview`}
+                {`npm install -g @sayandeep_005/gemreview`}
               </CodeBlock>
               <p className="text-sm text-muted-foreground">
                 Or run without installing:
               </p>
-              <CodeBlock>{`npx gemreview init`}</CodeBlock>
+              <CodeBlock>{`npx @sayandeep_005/gemreview init`}</CodeBlock>
             </div>
           </section>
 
@@ -859,7 +859,7 @@ jobs:
                 },
                 {
                   q: "How do I change the Gemini model?",
-                  a: 'Set the "model" field in your .gemreview.json. Default is gemini-2.5-pro.',
+                  a: 'Set the "model" field in your .gemreview.json or choose interactively during "gemreview init". GemReview dynamically queries Google AI Studio for all available models (Gemini 2.5 Flash, 2.0 Flash, 2.5 Pro, Thinking, and Gemma) and includes automatic quota failover on 429 rate limits.',
                 },
                 {
                   q: "Can I exclude files from reviews?",
@@ -894,13 +894,13 @@ jobs:
             </p>
             <div className="flex justify-center gap-3 flex-wrap">
               <a
-                href="https://www.npmjs.com/package/gemreview"
+                href="https://www.npmjs.com/package/@sayandeep_005/gemreview"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all"
               >
                 <Terminal className="h-4 w-4" />
-                npm install -g gemreview
+                npm install -g @sayandeep_005/gemreview
               </a>
             </div>
           </section>
@@ -956,7 +956,7 @@ jobs:
               <Github className="h-3.5 w-3.5" /> GitHub
             </a>
             <a
-              href="https://www.npmjs.com/package/gemreview"
+              href="https://www.npmjs.com/package/@sayandeep_005/gemreview"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-foreground transition-colors"
