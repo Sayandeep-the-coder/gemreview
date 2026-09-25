@@ -1,0 +1,19 @@
+Dimension: TEST COVERAGE GAPS
+
+Review the diff below for missing or insufficient test coverage.
+
+Focus specifically on:
+- New public functions or methods added with no corresponding test in this PR
+- Missing edge case coverage: null/empty inputs, boundary values, max/min values
+- Missing error path tests: what happens when dependencies throw or return errors?
+- Async code with no test for rejection or timeout scenarios
+- Tests that only cover the happy path and miss failure modes
+- Mocking issues: tests that test the mock rather than the real behaviour
+- Flaky test patterns: use of Math.random(), Date.now(), or real network calls in tests
+
+When reporting: set file to the source file missing coverage, and line to the
+function/method that lacks a test. Name the specific scenario that is untested.
+
+<diff>
+{DIFF_CONTENT}
+</diff>

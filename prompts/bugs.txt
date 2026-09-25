@@ -1,0 +1,19 @@
+Dimension: BUGS AND CODE QUALITY
+
+Review the diff below for logic errors and code quality issues.
+
+Focus specifically on:
+- Null / undefined dereferences and missing null checks
+- Off-by-one errors in loops or array access
+- Incorrect or swallowed error handling (empty catch blocks, silent failures)
+- Unreachable code or impossible conditions
+- Race conditions or missing synchronisation in async code
+- Incorrect type usage or implicit coercions that could cause runtime errors
+- Boolean logic errors (flipped conditions, missing negation)
+- Resource leaks (open file handles, unclosed connections, dangling timers)
+
+Do NOT report style issues, missing comments, or formatting problems.
+
+<diff>
+{DIFF_CONTENT}
+</diff>

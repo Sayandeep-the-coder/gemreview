@@ -1,0 +1,20 @@
+Dimension: PERFORMANCE AND OPTIMISATION
+
+Review the diff below for performance issues and optimisation opportunities.
+
+Focus specifically on:
+- Algorithmic complexity: O(n²) or worse that could be improved
+- N+1 query patterns: fetching data inside loops rather than in bulk
+- Unnecessary re-computation: values computed on every call that should be cached
+- Memory leak patterns: event listeners not removed, unbounded caches or queues
+- Redundant database queries or API calls that could be batched
+- Large import chains or bundle size impacts
+- Synchronous operations that would benefit from async/streaming
+- Inefficient data structure choices (array search vs Set/Map O(1) lookup)
+
+Only report issues with meaningful real-world impact. Do not flag micro-optimisations
+unless they are clearly in a hot path called millions of times.
+
+<diff>
+{DIFF_CONTENT}
+</diff>
