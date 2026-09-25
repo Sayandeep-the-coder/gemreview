@@ -1,0 +1,61 @@
+name: 'GemReview'
+description: 'AI-powered PR review using Google Gemini — posts inline comments and a structured summary to your GitHub PR'
+author: 'Sayandeep-the-coder'
+
+branding:
+  icon: 'code'
+  color: 'blue'
+
+inputs:
+  gemini-api-key:
+    description: 'Your Google Gemini API key. Store as a repo secret: GEMINI_API_KEY'
+    required: true
+
+  github-token:
+    description: 'GitHub token for reading the PR diff and posting comments'
+    required: false
+    default: ${{ github.token }}
+
+  dimensions:
+    description: 'Comma-separated review dimensions: bugs,security,tests,optimisation'
+    required: false
+    default: 'bugs,security,tests,optimisation'
+
+  severity-threshold:
+    description: 'Minimum severity to post as an inline comment: low|medium|high|critical'
+    required: false
+    default: 'medium'
+
+  max-inline-comments:
+    description: 'Maximum number of inline comments to post per review run'
+    required: false
+    default: '20'
+
+  fail-on-severity:
+    description: 'Fail the CI check if any finding reaches this severity: low|medium|high|critical. Leave empty to never fail.'
+    required: false
+    default: ''
+
+  skip-draft-prs:
+    description: 'Skip review if the PR is in draft state'
+    required: false
+    default: 'true'
+
+  skip-bots:
+    description: 'Skip review if the PR author is a bot (e.g. dependabot)'
+    required: false
+    default: 'true'
+
+  post-prompt:
+    description: 'Post the AI agent fix prompt as a collapsible PR comment after the review'
+    required: false
+    default: 'false'
+
+  dry-run:
+    description: 'Run the review but do not post any comments to GitHub'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'node20'
+  main: 'action/dist/index.js'
