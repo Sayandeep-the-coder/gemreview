@@ -23,6 +23,9 @@ GemReview solves this by analysing your GitHub pull requests using Gemini AI and
 - 🔒 **Security scanning** — injections, hardcoded secrets, missing auth checks
 - 🧪 **Test coverage gaps** — missing tests for new code, untested edge cases
 - ⚡ **Optimisation hints** — algorithmic complexity, N+1 queries, memory leaks
+- 🤖 **AI Agent Fix Prompt** — generate self-contained prompts to fix findings with Cursor, Copilot, or Claude (`--prompt`)
+- 🔄 **Intelligent Quota Failover** — automatic fallback across Gemini Flash & Pro on 429 quota exhaustion or 503 overload
+- ⏱️ **Proactive Rate Pacing** — respects model RPM limits to prevent burst rate limit errors
 - 💬 **Inline PR comments** — posted per finding, anchored to the exact line
 - 📋 **Summary comment** — severity table posted to the PR thread
 - 🌐 **Multi-language** — works with any language in your diff
@@ -34,14 +37,16 @@ GemReview solves this by analysing your GitHub pull requests using Gemini AI and
 
 ## Google AI Integration
 
-GemReview is built on Google's AI infrastructure:
+GemReview is built on Google's AI infrastructure with live model discovery and dynamic failover:
 
-| Google Service | Version | Purpose |
-|----------------|---------|---------|
-| **Gemini 2.5 Pro** | `gemini-2.5-pro` | Deep code analysis — 1M context window |
-| **Gemini 2.0 Flash** | `gemini-2.0-flash` | Fast reviews — lower latency + cost |
-| **Google AI Studio** | — | Free API key provisioning for developers |
-| **Google OAuth 2.0** | — | Team dashboard sign-in (v1.4.0) |
+| Google Service | Model / Feature | Purpose |
+|----------------|-----------------|---------|
+| **Gemini 2.5 Flash** | `gemini-2.5-flash` | Flagship fast review — 1M context window, high TPM |
+| **Gemini 2.0 Flash** | `gemini-2.0-flash` | Ultra-low latency code analysis |
+| **Gemini 2.5 Pro** | `gemini-2.5-pro` | Deep code reasoning and multi-file architecture |
+| **Gemma 2 Open Models** | `gemma-2-27b-it` | Open-weight instruction tuned models |
+| **Dynamic Discovery** | Live API Catalog | Queries available models and live quotas from AI Studio |
+| **Quota Failover** | Auto 429/503 fallback | Seamlessly switches models if rate limits are hit |
 
 Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com/app/apikey)
 
@@ -58,19 +63,21 @@ Get a free Gemini API key at [aistudio.google.com](https://aistudio.google.com/a
 ## Installation
 
 ```bash
-npm install -g gemreview
+npm install -g @sayandeep_005/gemreview
 ```
 
 Or run without installing:
 ```bash
-npx gemreview init
+npx @sayandeep_005/gemreview init
 ```
+
+> **Note:** Once installed, the command is always **`gemreview`** (e.g. `gemreview run --pr <url>`).
 
 ---
 
 ## Choosing Your Mode
 
-GemReview v1.3.0 supports two ways to run AI code reviews. Choose the one that fits your workflow.
+GemReview supports two ways to run AI code reviews. Choose the one that fits your workflow.
 
 | Feature | **Personal Mode** | **Team Mode** |
 |---------|-------------------|---------------|
@@ -325,7 +332,7 @@ Create a `.gemreview.json` in your project root to customise behaviour per repo:
 | `exclude_paths` | `string[]` | `[]` | Glob patterns to skip |
 | `summary_comment` | `boolean` | `true` | Post a summary comment to the PR |
 | `inline_comments` | `boolean` | `true` | Post inline comments per finding |
-| `model` | `string` | `"gemini-2.5-pro"` | Gemini model to use |
+| `model` | `string` | optional | Gemini model to use (defaults to dynamic AI Studio recommended model, e.g. `gemini-2.5-flash`) |
 
 ### Global Config (API Keys)
 
