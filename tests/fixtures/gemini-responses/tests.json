@@ -1,0 +1,22 @@
+[
+  {
+    "file": "src/services/userService.ts",
+    "line": 15,
+    "dimension": "tests",
+    "severity": "medium",
+    "title": "No tests for searchUsers function",
+    "description": "The new searchUsers function (line 15) has no corresponding test. It handles user search with a database query but no test verifies correct results, empty queries, or SQL injection prevention.",
+    "suggestion": "Add a test file tests/services/userService.test.ts with cases for: valid search returning results, empty query param, query with special characters, and no results found.",
+    "confidence": 0.88
+  },
+  {
+    "file": "src/services/userService.ts",
+    "line": 19,
+    "dimension": "tests",
+    "severity": "medium",
+    "title": "No tests for processUserData error paths",
+    "description": "The processUserData function has no test coverage. The null dereference on userData.profile means the error path (when profile is missing) is completely untested.",
+    "suggestion": "Add unit tests covering: valid userData input, missing profile field (should throw), null userData input, and empty strings for name/email.",
+    "confidence": 0.85
+  }
+]

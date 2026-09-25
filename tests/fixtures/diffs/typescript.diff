@@ -1,0 +1,48 @@
+diff --git a/src/services/userService.ts b/src/services/userService.ts
+index 1234567..abcdefg 100644
+--- a/src/services/userService.ts
++++ b/src/services/userService.ts
+@@ -1,5 +1,8 @@
+ import { db } from '../database';
+ import { User } from '../types';
++import axios from 'axios';
++
++const API_KEY = 'sk-proj-abc123def456ghi789jkl012mno345pqr678stu901vwx234';
+ 
+ export async function getUserById(id: string): Promise<User> {
+   const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
+@@ -10,6 +13,32 @@ export async function getUserById(id: string): Promise<User> {
+   return result.rows[0];
+ }
+ 
++export async function searchUsers(query: string): Promise<User[]> {
++  const result = await db.query(`SELECT * FROM users WHERE name LIKE '%${query}%'`);
++  return result.rows;
++}
++
++export function processUserData(userData: any) {
++  const name = userData.profile.name.toUpperCase();
++  const email = userData.profile.email.toLowerCase();
++
++  return {
++    displayName: name,
++    contactEmail: email,
++    createdAt: new Date().toISOString(),
++  };
++}
++
++export function findDuplicateUsers(users: User[]): User[] {
++  const duplicates: User[] = [];
++  for (let i = 0; i < users.length; i++) {
++    for (let j = 0; j < users.length; j++) {
++      if (i !== j && users[i].email === users[j].email) {
++        duplicates.push(users[i]);
++      }
++    }
++  }
++  return duplicates;
++}
++
+ export async function deleteUser(id: string): Promise<void> {
+   await db.query('DELETE FROM users WHERE id = $1', [id]);
+ }
