@@ -1,6 +1,6 @@
 {
   "name": "@sayandeep_005/gemreview",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "AI-powered CLI PR review bot using Google Gemini — posts inline comments and a structured summary to GitHub pull requests",
   "author": "Sayandeep",
   "license": "MIT",
