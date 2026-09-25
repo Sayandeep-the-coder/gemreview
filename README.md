@@ -2,8 +2,8 @@
 
 > AI-powered PR review bot for the terminal. Powered by Google Gemini.
 
-[![npm version](https://img.shields.io/npm/v/gemreview)](https://www.npmjs.com/package/gemreview)
-[![npm downloads](https://img.shields.io/npm/dm/gemreview)](https://www.npmjs.com/package/gemreview)
+[![npm version](https://img.shields.io/npm/v/@sayandeep_005/gemreview)](https://www.npmjs.com/package/@sayandeep_005/gemreview)
+[![npm downloads](https://img.shields.io/npm/dm/@sayandeep_005/gemreview)](https://www.npmjs.com/package/@sayandeep_005/gemreview)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js ≥ 20](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org)
 [![Powered by Gemini](https://img.shields.io/badge/Powered%20by-Google%20Gemini-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
