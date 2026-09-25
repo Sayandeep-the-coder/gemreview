@@ -1,0 +1,34 @@
+# Source files (all code is in dist/)
+src/
+tests/
+api/
+action/
+prompts/test/     # Exclude any test prompts if present
+
+# Config
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+.eslintrc.json
+.prettierrc
+.env
+.env.*
+.gemreview.json
+.npmignore
+.gitignore
+
+# Project docs (internal only)
+PRD.md
+ARCHITECTURE.md
+CONTRIBUTING.md
+ROADMAP.md
+
+# Dev artifacts
+node_modules/
+*.map
+.git/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
